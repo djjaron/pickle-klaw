@@ -1,7 +1,7 @@
 import { pgTable, text, timestamp, uuid, integer, jsonb, boolean, index } from 'drizzle-orm/pg-core';
 
-// ─── Clubs ───────────────────────────────────────────────────────────────────
-export const clubs = pgTable('clubs', {
+// All tables prefixed with 'klw_' to avoid collisions with existing PickleCall tables
+export const clubs = pgTable('klw_clubs', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: text('name').notNull(),
   slug: text('slug').unique().notNull(),
@@ -22,7 +22,7 @@ export const clubs = pgTable('clubs', {
 });
 
 // ─── Locations ───────────────────────────────────────────────────────────────
-export const locations = pgTable('locations', {
+export const locations = pgTable('klw_locations', {
   id: uuid('id').primaryKey().defaultRandom(),
   clubId: uuid('club_id').references(() => clubs.id).notNull(),
   name: text('name').notNull(),
@@ -33,7 +33,7 @@ export const locations = pgTable('locations', {
 });
 
 // ─── Members ─────────────────────────────────────────────────────────────────
-export const members = pgTable('members', {
+export const members = pgTable('klw_members', {
   id: uuid('id').primaryKey().defaultRandom(),
   clubId: uuid('club_id').references(() => clubs.id).notNull(),
   name: text('name').notNull(),
@@ -47,7 +47,7 @@ export const members = pgTable('members', {
 }));
 
 // ─── Events ──────────────────────────────────────────────────────────────────
-export const events = pgTable('events', {
+export const events = pgTable('klw_events', {
   id: uuid('id').primaryKey().defaultRandom(),
   clubId: uuid('club_id').references(() => clubs.id).notNull(),
   locationId: uuid('location_id').references(() => locations.id),
@@ -63,7 +63,7 @@ export const events = pgTable('events', {
 });
 
 // ─── Bookings ────────────────────────────────────────────────────────────────
-export const bookings = pgTable('bookings', {
+export const bookings = pgTable('klw_bookings', {
   id: uuid('id').primaryKey().defaultRandom(),
   clubId: uuid('club_id').references(() => clubs.id).notNull(),
   eventId: uuid('event_id').references(() => events.id),
@@ -78,7 +78,7 @@ export const bookings = pgTable('bookings', {
 });
 
 // ─── Waivers ─────────────────────────────────────────────────────────────────
-export const waivers = pgTable('waivers', {
+export const waivers = pgTable('klw_waivers', {
   id: uuid('id').primaryKey().defaultRandom(),
   clubId: uuid('club_id').references(() => clubs.id).notNull(),
   memberId: uuid('member_id').references(() => members.id).notNull(),
@@ -89,7 +89,7 @@ export const waivers = pgTable('waivers', {
 });
 
 // ─── Conversations ───────────────────────────────────────────────────────────
-export const conversations = pgTable('conversations', {
+export const conversations = pgTable('klw_conversations', {
   id: uuid('id').primaryKey().defaultRandom(),
   clubId: uuid('club_id').references(() => clubs.id).notNull(),
   memberId: uuid('member_id').references(() => members.id),
@@ -102,7 +102,7 @@ export const conversations = pgTable('conversations', {
 });
 
 // ─── Messages ────────────────────────────────────────────────────────────────
-export const messages = pgTable('messages', {
+export const messages = pgTable('klw_messages', {
   id: uuid('id').primaryKey().defaultRandom(),
   conversationId: uuid('conversation_id').references(() => conversations.id).notNull(),
   role: text('role').notNull(), // 'customer' | 'agent' | 'system'
@@ -112,7 +112,7 @@ export const messages = pgTable('messages', {
 });
 
 // ─── Agent Runs ──────────────────────────────────────────────────────────────
-export const agentRuns = pgTable('agent_runs', {
+export const agentRuns = pgTable('klw_agent_runs', {
   id: uuid('id').primaryKey().defaultRandom(),
   conversationId: uuid('conversation_id').references(() => conversations.id).notNull(),
   messageId: uuid('message_id').references(() => messages.id),
@@ -127,7 +127,7 @@ export const agentRuns = pgTable('agent_runs', {
 });
 
 // ─── Knowledge Chunks ────────────────────────────────────────────────────────
-export const knowledgeChunks = pgTable('knowledge_chunks', {
+export const knowledgeChunks = pgTable('klw_knowledge_chunks', {
   id: uuid('id').primaryKey().defaultRandom(),
   clubId: uuid('club_id').references(() => clubs.id).notNull(),
   content: text('content').notNull(),
@@ -137,7 +137,7 @@ export const knowledgeChunks = pgTable('knowledge_chunks', {
 });
 
 // ─── Integrations ────────────────────────────────────────────────────────────
-export const integrations = pgTable('integrations', {
+export const integrations = pgTable('klw_integrations', {
   id: uuid('id').primaryKey().defaultRandom(),
   clubId: uuid('club_id').references(() => clubs.id).notNull(),
   type: text('type').notNull(), // 'twilio' | 'stripe' | 'google_calendar' | 'mailchimp'
