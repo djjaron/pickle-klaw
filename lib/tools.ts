@@ -27,7 +27,7 @@ const INTENT_PATTERNS: Record<string, { keywords: string[]; requires: string[] }
     requires: [],
   },
   complaint: {
-    keywords: ['problem', 'issue', 'broken', 'refund', 'cancel', 'unhappy', 'bad', 'wrong', 'not working', 'doesn\'t work', 'complaint', 'help'],
+    keywords: ['problem', 'problem with', 'issue', 'broken', 'refund', 'cancel', 'unhappy', 'bad', 'wrong', 'not working', 'doesn\'t work', 'complaint', 'help'],
     requires: [],
   },
 };
@@ -53,14 +53,18 @@ export function classifyIntent(message: string): ClassifiedIntent {
   const timeMatch = lower.match(/(\d{1,2}(:\d{2})?\s*(am|pm))/);
   if (timeMatch) entities.time = timeMatch[0];
 
-  // Extract name entities (broader heuristic: "Does NAME have", "look up NAME", "for NAME", etc.)
+  // Extract name entities from the ORIGINAL message to preserve case.
+  // Handles patterns like "Look up member Avery Chen", "Does Jordan Lee have a waiver?", etc.
   const namePatterns = [
-    /(?:does|find|look\s*up|lookup|search|for)\s+([a-z]+(?:\s+[a-z]+)?)\b/i,
+    // "does Jordan Lee have...", "find coach Sarah", "look up member Avery Chen"
+    /(?:does|find|look\s*up|lookup|search|for)\s+(?:member\s+|coach\s+|pro\s+|instructor\s+)?([a-z]+(?:\s+[a-z]+))\b/i,
+    // "name is Jordan Lee", "I'm Jordan Lee", "called Jordan"
     /(?:name is|i'm|i am|called)\s+([a-z]+(?:\s+[a-z]+)?)\b/i,
+    // "Jordan Lee have...", "Taylor Reed needs..."
     /([a-z]+\s+[a-z]+)\s*(?:have|has|need|get|sign|check)/i,
   ];
   for (const pattern of namePatterns) {
-    const nameMatch = lower.match(pattern);
+    const nameMatch = message.match(pattern);
     if (nameMatch) {
       entities.name = nameMatch[1].trim();
       break;
