@@ -7,3 +7,6 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+[functions."cron-outreach"]
+  schedule = "0 14 * * *"

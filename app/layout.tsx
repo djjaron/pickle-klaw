@@ -1,3 +1,4 @@
+import './globals.css';
 import type { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
@@ -16,12 +17,12 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <head>
         <link rel="icon" href="/favicon.svg" />
-        <meta name="theme-color" content="#0a0a0a" />
+        <meta name="theme-color" content="#fbfcf8" />
       </head>
-      <body className="bg-[#0a0a0a] text-white antialiased">{children}</body>
+      <body>{children}</body>
     </html>
   );
 }

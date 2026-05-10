@@ -5,87 +5,100 @@ interface AgentTraceProps {
 }
 
 export function AgentTrace({ traces }: AgentTraceProps) {
-  if (traces.length === 0) {
+  const safeTraces = Array.isArray(traces) ? traces : [];
+  const validTraces = safeTraces.filter(Boolean);
+
+  if (validTraces.length === 0) {
     return (
-      <div className="p-6 text-center text-white/20 text-sm">
-        <div className="text-3xl mb-3">🔍</div>
-        <p>Agent trace will appear here</p>
-        <p className="text-xs mt-1">See what the AI classified, which tools it ran, and what knowledge it used</p>
+      <div className="p-6 text-center text-sm text-[#7a877c]">
+        <div className="mx-auto mb-3 grid size-10 place-items-center rounded-lg border border-[#d7e2d3] bg-white text-xs font-semibold text-[#607064]">TR</div>
+        <p className="font-medium text-[#435044]">Waiting for a run</p>
+        <p className="mt-1 text-xs">Intent, tools, model, and knowledge appear here.</p>
       </div>
     );
   }
 
   return (
-    <div className="p-4 space-y-3">
-      <h3 className="text-xs font-mono text-white/30 uppercase tracking-wider mb-3">Agent Trace</h3>
-      {traces.map((trace, i) => (
-        <div key={i} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 space-y-3">
-          {/* Intent */}
+    <div className="space-y-3 p-4">
+      <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-[#6a7a6e]">Agent Trace</h3>
+      {validTraces.map((trace, i) => {
+        const tools = Array.isArray(trace.tools) ? trace.tools : [];
+        const knowledge = Array.isArray(trace.knowledge) ? trace.knowledge : [];
+        const confidence = typeof trace.confidence === 'number' ? trace.confidence : 0;
+        const timestamp = trace.timestamp ? new Date(trace.timestamp) : null;
+
+        return (
+        <div key={i} className="space-y-3 rounded-lg border border-[#dfe7da] bg-white p-4 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono text-white/40">Intent</span>
+            <span className="text-[10px] font-semibold uppercase tracking-wide text-[#7a877c]">Intent</span>
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-              trace.intent === 'booking' ? 'bg-blue-500/20 text-blue-400' :
-              trace.intent === 'question' ? 'bg-green-500/20 text-green-400' :
-              trace.intent === 'waiver' ? 'bg-amber-500/20 text-amber-400' :
-              trace.intent === 'complaint' ? 'bg-red-500/20 text-red-400' :
-              'bg-white/[0.06] text-white/60'
+              trace.intent === 'booking' ? 'bg-[#dff8e8] text-[#1b6b3a]' :
+              trace.intent === 'question' ? 'bg-[#e6f0ff] text-[#315d9d]' :
+              trace.intent === 'waiver' ? 'bg-[#fff0cc] text-[#8a5b00]' :
+              trace.intent === 'complaint' ? 'bg-[#ffe2e2] text-[#9d3030]' :
+              'bg-[#eef3eb] text-[#526256]'
             }`}>
-              {trace.intent}
+              {trace.intent || 'unknown'}
             </span>
           </div>
 
-          {/* Confidence bar */}
           <div>
             <div className="flex items-center justify-between text-[10px] mb-1">
-              <span className="text-white/30">Confidence</span>
-              <span className="text-white/50">{trace.confidence}%</span>
+              <span className="text-[#7a877c]">Confidence</span>
+              <span className="text-[#526256]">{confidence}%</span>
             </div>
-            <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+            <div className="h-1.5 overflow-hidden rounded-full bg-[#e6ede2]">
               <div
                 className={`h-full rounded-full transition-all ${
-                  trace.confidence > 70 ? 'bg-green-500' :
-                  trace.confidence > 40 ? 'bg-amber-500' : 'bg-red-500'
+                  confidence > 70 ? 'bg-[#2f9b5f]' :
+                  confidence > 40 ? 'bg-[#d9961f]' : 'bg-[#ce4d4d]'
                 }`}
-                style={{ width: `${trace.confidence}%` }}
+                style={{ width: `${confidence}%` }}
               />
             </div>
           </div>
 
-          {/* Tools */}
           <div className="flex items-center justify-between text-[10px]">
-            <span className="text-white/30">Tools</span>
-            <span className="text-white/50">
-              {trace.tools.length > 0 ? trace.tools.join(', ') : 'None'}
+            <span className="text-[#7a877c]">Tools</span>
+            <span className="max-w-40 truncate text-[#526256]">
+              {tools.length > 0 ? tools.join(', ') : 'None'}
             </span>
           </div>
 
-          {/* Knowledge */}
           <div className="flex items-center justify-between text-[10px]">
-            <span className="text-white/30">Knowledge</span>
-            <span className="text-white/50">
-              {trace.knowledge.length > 0 ? `${trace.knowledge.length} chunks` : 'None'}
+            <span className="text-[#7a877c]">Knowledge</span>
+            <span className="text-[#526256]">
+              {knowledge.length > 0 ? `${knowledge.length} chunks` : 'None'}
             </span>
           </div>
 
-          {/* Latency */}
           <div className="flex items-center justify-between text-[10px]">
-            <span className="text-white/30">Latency</span>
-            <span className="text-white/50">{trace.latency}ms</span>
+            <span className="text-[#7a877c]">Latency</span>
+            <span className="text-[#526256]">{trace.latency}ms</span>
           </div>
 
-          {/* Human escalation */}
-          {trace.requiresHuman && (
-            <div className="text-[10px] px-2 py-1 rounded bg-red-500/10 text-red-400 border border-red-500/20">
-              Escalated to human
+          <div className="flex items-center justify-between text-[10px]">
+            <span className="text-[#7a877c]">Model</span>
+            <span className="max-w-40 truncate text-[#526256]">{trace.model || 'template'}</span>
+          </div>
+
+          {trace.toolResult?.message && (
+            <div className="rounded-md border border-[#dfe7da] bg-[#f6faf3] p-2 text-[11px] leading-relaxed text-[#526256]">
+              {trace.toolResult.message}
             </div>
           )}
 
-          {/* Timestamp */}
-          <div className="text-[9px] text-white/15 text-right">
-            {new Date(trace.timestamp).toLocaleTimeString()}
+          {trace.requiresHuman && (
+            <div className="rounded border border-[#efb4b4] bg-[#fff0f0] px-2 py-1 text-[10px] text-[#9d3030]">
+              Human escalation required
+            </div>
+          )}
+
+          <div className="text-right text-[9px] text-[#98a39a]">
+            {timestamp ? timestamp.toLocaleTimeString() : 'No timestamp'}
           </div>
         </div>
-      ))}
+      )})}
     </div>
   );
 }

@@ -1,7 +1,8 @@
-import { Handler } from '@netlify/functions';
-import { runAgent } from '../../lib/agent';
-import { db } from '../../db/db';
+import { getDb } from '../../db/db';
 import { conversations, messages } from '../../db/schema';
+import { runAgent } from '../../lib/agent';
+import { resolveClub } from '../../lib/db';
+import { Handler, json } from '../../lib/netlify';
 
 // Load DB before handler
 import '../../db/neon';
@@ -19,56 +20,56 @@ export const handler: Handler = async (event) => {
       return { statusCode: 400, body: JSON.stringify({ error: 'message is required' }) };
     }
 
-    const club_id = clubId || 'demo-club';
+    const club = await resolveClub(clubId);
 
     // Create or get conversation
     let convId = conversationId;
     if (!convId) {
-      const conv = await db.insert(conversations).values({
-        clubId: club_id,
-        source: 'demo',
-        status: 'active',
-        customerName: 'Demo User',
-      }).returning();
-      convId = conv[0]?.id;
+      try {
+        const conv = await getDb().insert(conversations).values({
+          clubId: club.id,
+          source: 'demo',
+          status: 'active',
+          customerName: 'Demo User',
+        }).returning();
+        convId = conv[0]?.id;
+      } catch {}
     }
 
     // Save customer message
     if (convId) {
-      await db.insert(messages).values({
-        conversationId: convId,
-        role: 'customer',
-        content: message,
-      });
+      try {
+        await getDb().insert(messages).values({
+          conversationId: convId,
+          role: 'customer',
+          content: message,
+        });
+      } catch {}
     }
 
     // Run agent
-    const result = await runAgent(club_id, message, convId || undefined);
+    const result = await runAgent(club.id, message, convId || undefined);
 
     // Save agent response
     if (convId) {
-      await db.insert(messages).values({
-        conversationId: convId,
-        role: 'agent',
-        content: result.response,
-        intent: result.intent.intent,
-      });
+      try {
+        await getDb().insert(messages).values({
+          conversationId: convId,
+          role: 'agent',
+          content: result.response,
+          intent: result.intent.intent,
+        });
+      } catch {}
     }
 
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        response: result.response,
-        conversationId: convId,
-        trace: result.trace,
-      }),
-    };
+    return json(200, {
+      response: result.response,
+      conversationId: convId,
+      club: { id: club.id, name: club.name, slug: club.slug },
+      trace: result.trace,
+    });
   } catch (error: any) {
     console.error('Chat error:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message || 'Internal error' }),
-    };
+    return json(500, { error: error.message || 'Internal error' });
   }
 };
