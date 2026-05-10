@@ -3,8 +3,8 @@
   "short_name": "PickleKlaw",
   "start_url": "/demo",
   "display": "standalone",
-  "background_color": "#0a0a0a",
-  "theme_color": "#0a0a0a",
+  "background_color": "#fbfcf8",
+  "theme_color": "#153f2a",
   "description": "AI pickleball club receptionist",
   "icons": [
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },

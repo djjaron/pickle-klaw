@@ -7,28 +7,28 @@ export { retrieveKnowledge, seedClubKnowledge } from './rag';
 
 const INTENT_PATTERNS: Record<string, { keywords: string[]; requires: string[] }> = {
   booking: {
-    keywords: ['book', 'reserve', 'court', 'schedule', 'slot', 'time', 'available', 'reservation'],
-    requires: ['date', 'time'],
+    keywords: ['book', 'book a', 'booking', 'reserve', 'reservation', 'court', 'courts', 'schedule', 'slot', 'available', 'hold', 'grab', 'join', 'session', 'play', 'event', 'lesson', 'clinic'],
+    requires: ['date'],
   },
   question: {
-    keywords: ['what', 'how', 'when', 'who', 'where', 'hours', 'open', 'price', 'cost', 'fee', 'member', 'policy'],
-    requires: ['topic'],
+    keywords: ['what', 'how', 'when', 'who', 'where', 'hours', 'open', 'lesson', 'lessons', 'event', 'events', 'can you', 'can i', 'tell me', 'do you', 'week', 'today', 'private', 'visit', 'shop', 'pro shop'],
+    requires: [],
   },
   waiver: {
-    keywords: ['waiver', 'sign', 'release', 'liability', 'form'],
-    requires: ['member'],
+    keywords: ['waiver', 'waivers', 'sign', 'signed', 'signing', 'release', 'liability', 'form', 'forms'],
+    requires: ['name'],
   },
   directory: {
-    keywords: ['find', 'lookup', 'search', 'member', 'coach', 'pro', 'instructor', 'who is'],
+    keywords: ['find', 'lookup', 'look up', 'search', 'coach', 'coaches', 'instructor', 'find me', 'who is', 'pro'],
     requires: ['name'],
   },
   pricing: {
-    keywords: ['price', 'cost', 'fee', 'membership', 'rate', 'package', 'how much'],
-    requires: ['service'],
+    keywords: ['price', 'pricing', 'cost', 'costs', 'fee', 'fees', 'membership', 'rate', 'rates', 'package', 'how much', 'drop-in', 'drop in', 'drop', 'become', 'member', 'sign up'],
+    requires: [],
   },
   complaint: {
-    keywords: ['problem', 'issue', 'broken', 'refund', 'cancel', 'unhappy', 'bad', 'wrong'],
-    requires: ['issue_type'],
+    keywords: ['problem', 'issue', 'broken', 'refund', 'cancel', 'unhappy', 'bad', 'wrong', 'not working', 'doesn\'t work', 'complaint', 'help'],
+    requires: [],
   },
 };
 
@@ -53,16 +53,38 @@ export function classifyIntent(message: string): ClassifiedIntent {
   const timeMatch = lower.match(/(\d{1,2}(:\d{2})?\s*(am|pm))/);
   if (timeMatch) entities.time = timeMatch[0];
 
-  // Extract name entities (simple heuristic)
-  const nameMatch = lower.match(/(?:for|name is|i'm|i am|called)\s+([a-z]+(?:\s+[a-z]+)?)/);
-  if (nameMatch) entities.name = nameMatch[1];
+  // Extract name entities (broader heuristic: "Does NAME have", "look up NAME", "for NAME", etc.)
+  const namePatterns = [
+    /(?:does|find|look\s*up|lookup|search|for)\s+([a-z]+(?:\s+[a-z]+)?)\b/i,
+    /(?:name is|i'm|i am|called)\s+([a-z]+(?:\s+[a-z]+)?)\b/i,
+    /([a-z]+\s+[a-z]+)\s*(?:have|has|need|get|sign|check)/i,
+  ];
+  for (const pattern of namePatterns) {
+    const nameMatch = lower.match(pattern);
+    if (nameMatch) {
+      entities.name = nameMatch[1].trim();
+      break;
+    }
+  }
 
-  // Score each intent
+  // Score each intent using point-based system for high-confidence classification
   for (const [intent, config] of Object.entries(INTENT_PATTERNS)) {
-    const matches = config.keywords.filter(k => lower.includes(k));
-    const score = matches.length / config.keywords.length;
+    const matches = config.keywords.filter(k => {
+      // Allow common suffixes: plural, past tense, gerund for single-word keywords
+      const suffix = k.includes(' ') ? '' : '(s|es|ing|ed)?';
+      const pattern = new RegExp(`\\b${k.replace(/\s+/g, '\\s+')}${suffix}\\b`, 'i');
+      return pattern.test(lower);
+    });
+    if (matches.length === 0) continue;
+
+    // Point system: base 70 + up to 30 keywords + up to 10 entities
+    const keywordPoints = Math.min(matches.length, 3) * 10;   // max 30 for 3+ keywords
+    const entityPoints = config.requires.filter(r => entities[r]).length * 10;
+    const priorityBonus = intent === 'complaint' ? 3 : 0;
+
+    const score = (70 + keywordPoints + entityPoints + priorityBonus) / 100;
     if (score > bestScore) {
-      bestScore = score;
+      bestScore = Math.min(score, 0.99);
       bestIntent = intent;
     }
   }
