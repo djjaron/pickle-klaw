@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { AgentTrace } from '@/components/AgentTrace';
 import { BookingPanel } from '@/components/BookingPanel';
 import { ChatSimulator } from '@/components/ChatSimulator';
+import { TestRunner } from '@/components/TestRunner';
 
 export default function DemoPage() {
   const [messages, setMessages] = useState<Array<{ role: string; content: string }>>([
@@ -85,6 +86,10 @@ export default function DemoPage() {
             API error: {error}
           </div>
         )}
+      </section>
+
+      <section className="mx-auto w-full max-w-6xl px-4 pb-2 sm:px-6">
+        <TestRunner onSend={sendMessage} loading={loading} />
       </section>
 
       <div className="mx-auto grid min-h-0 w-full max-w-6xl flex-1 grid-rows-[minmax(0,1fr)_auto] gap-4 px-4 pb-4 sm:px-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:grid-rows-1">

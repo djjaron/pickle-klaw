@@ -36,7 +36,7 @@ beforeEach(() => {
 
 // ─── Imports ─────────────────────────────────────────────────────────────────
 
-import { classifyIntent } from './tools';
+import { classifyIntent } from './intent';
 import {
   toolBookingPodPlay,
   toolMemberLookupPodPlay,

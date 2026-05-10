@@ -2,7 +2,8 @@ import { getDb } from '@/db/db';
 import { agentRuns } from '@/db/schema';
 import { callModel, getModelConfig } from './models';
 import { retrieveKnowledge } from './rag';
-import { classifyIntent, toolBooking, toolMemberLookup, toolWaiverCheck, type ClassifiedIntent } from './tools';
+import { classifyIntent, toolBooking, toolMemberLookup, toolWaiverCheck } from './tools';
+import type { ClassifiedIntent } from './intent';
 
 // ─── Agent Orchestrator ──────────────────────────────────────────────────────
 
