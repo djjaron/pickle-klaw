@@ -95,7 +95,7 @@ export async function runAgent(
   return buildResult(response, intent, toolsCalled, knowledgeUsed, toolResult, start);
 }
 
-async function loadHistory(conversationId?: string, limit = 6): Promise<Array<{ role: string; content: string }>> {
+export async function loadHistory(conversationId?: string, limit = 6): Promise<Array<{ role: string; content: string }>> {
   if (!conversationId) return [];
   try {
     const db = getDb();
@@ -110,7 +110,7 @@ async function loadHistory(conversationId?: string, limit = 6): Promise<Array<{ 
   }
 }
 
-function buildSystemPrompt(
+export function buildSystemPrompt(
   clubId: string,
   knowledge: string[],
   toolResult: any,

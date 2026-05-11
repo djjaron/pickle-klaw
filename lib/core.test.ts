@@ -190,7 +190,7 @@ describe('callModel with API responses', () => {
 
 // ─── Agent: buildSystemPrompt ────────────────────────────────────────────────
 
-import { runAgent } from './agent';
+import { runAgent, buildSystemPrompt, loadHistory } from './agent';
 import { classifyIntent } from './intent';
 
 describe('agent pipeline', () => {
@@ -271,6 +271,90 @@ describe('agent pipeline', () => {
     // Should not throw — the DB insert is wrapped in try/catch
     const result = await runAgent('demo', 'hello world', undefined);
     expect(result.response).toBeTruthy();
+  });
+
+  // ─── loadHistory ───────────────────────────────────────────────────
+  it('loadHistory returns empty array when no conversationId', async () => {
+    const history = await loadHistory(undefined);
+    expect(history).toEqual([]);
+  });
+
+  it('loadHistory returns empty array when conversationId is falsy', async () => {
+    const history = await loadHistory('');
+    expect(history).toEqual([]);
+  });
+
+  // ─── buildSystemPrompt with history ────────────────────────────────
+  it('buildSystemPrompt includes conversation history when passed', () => {
+    const history = [
+      { role: 'customer', content: 'I want to book a court' },
+      { role: 'agent', content: 'Sure, what time would you like?' },
+    ];
+    const intent = classifyIntent('book a court');
+    const prompt = buildSystemPrompt('demo', [], null, intent, history);
+    expect(prompt).toContain('Recent conversation:');
+    expect(prompt).toContain('Customer: I want to book a court');
+    expect(prompt).toContain('You: Sure, what time would you like?');
+  });
+
+  it('buildSystemPrompt formats history as Customer: and You: lines', () => {
+    const history = [
+      { role: 'customer', content: 'Hello' },
+      { role: 'agent', content: 'Hi there, how can I help?' },
+      { role: 'customer', content: 'Book a court please' },
+    ];
+    const intent = classifyIntent('book');
+    const prompt = buildSystemPrompt('demo', [], null, intent, history);
+    expect(prompt).toContain('Customer: Hello\nYou: Hi there, how can I help?\nCustomer: Book a court please');
+    expect(prompt).not.toContain('agent:');
+    expect(prompt).not.toContain('customer:');
+  });
+
+  it('buildSystemPrompt does not include history section when history is empty', () => {
+    const intent = classifyIntent('what are your hours');
+    const prompt = buildSystemPrompt('demo', [], null, intent, []);
+    expect(prompt).not.toContain('Recent conversation:');
+    expect(prompt).toContain('TTC Palms');
+  });
+
+  // ─── Multi-turn conversation ───────────────────────────────────────
+  it('simulated multi-turn booking sequence with shared conversationId', async () => {
+    const conversationId = 'multi-turn-test-1';
+
+    // Turn 1: initial booking request
+    const result1 = await runAgent('demo', 'I want to book a court', conversationId);
+    expect(result1.intent.intent).toBe('booking');
+    expect(result1.response).toBeTruthy();
+
+    // Turn 2: follow-up with date/time
+    const result2 = await runAgent('demo', 'Book for tomorrow at 10am', conversationId);
+    expect(result2.intent.intent).toBe('booking');
+    expect(result2.response).toBeTruthy();
+
+    // Turn 3: pricing question in same conversation
+    const result3 = await runAgent('demo', 'How much does it cost', conversationId);
+    expect(result3.intent.intent).toBe('pricing');
+    expect(result3.response).toBeTruthy();
+  });
+
+  it('agent passes conversationId through and returns valid trace', async () => {
+    const conversationId = 'conv-pass-through';
+    const result = await runAgent('demo', 'What are your hours?', conversationId);
+    expect(result.response).toBeTruthy();
+    expect(result.intent.intent).toBe('question');
+    expect(result.trace).toBeDefined();
+    expect(result.trace.timestamp).toBeTruthy();
+    expect(result.trace.model).toBeTruthy();
+    expect(result.trace.latency).toBeGreaterThanOrEqual(0);
+  });
+
+  it('agent handles booking intent end-to-end with conversationId', async () => {
+    const result = await runAgent('demo', 'Can I book a court for tomorrow?', 'conv-booking-e2e');
+    expect(result.intent.intent).toBe('booking');
+    expect(result.toolsCalled).toContain('toolBooking');
+    expect(result.response.length).toBeGreaterThan(20);
+    expect(result.trace.latency).toBeGreaterThanOrEqual(0);
+    expect(result.trace.timestamp).toBeTruthy();
   });
 });
 
