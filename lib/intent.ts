@@ -28,6 +28,14 @@ export const INTENT_PATTERNS: Record<string, { keywords: string[]; requires: str
     keywords: ['problem', 'problem with', 'issue', 'broken', 'refund', 'cancel', 'unhappy', 'bad', 'wrong', 'not working', 'doesn\'t work', 'complaint', 'help'],
     requires: [],
   },
+  membership: {
+    keywords: ['join', 'sign up', 'enroll', 'upgrade', 'downgrade', 'cancel membership', 'start membership', 'change plan'],
+    requires: ['name'],
+  },
+  check_in: {
+    keywords: ['check in', 'check-in', 'arrived', 'here for', 'i have a reservation', 'i am here', 'checking in'],
+    requires: ['name'],
+  },
 };
 
 export interface ClassifiedIntent {

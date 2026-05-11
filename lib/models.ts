@@ -115,28 +115,28 @@ function generateTemplateResponse(userMessage: string): string {
   const lower = userMessage.toLowerCase();
 
   if (lower.includes('book') || lower.includes('court') || lower.includes('reserve')) {
-    return 'I can help with that. I found open court windows tomorrow around 8:00, 9:00, 10:00, and 11:00. Which one should I hold?';
+    return 'I can help with that. Courts are available for reservation online at ttcpalms.com/book-court. Lit courts are open dusk to 10 PM daily. Would you like me to check availability for a specific day?';
   }
 
   if (lower.includes('price') || lower.includes('cost') || lower.includes('membership') || lower.includes('rate')) {
-    return 'Drop-in play is $15. Standard membership is $49/month for 4 court sessions, Premium is $89/month for unlimited courts, and guests are $10 with a member.';
+    return 'TTC Palms offers Tennis, Pickleball, Social, Homeowner, and Founding memberships. Contact frontdesk@ttcpalms.com or call (760) 346-6126 for details. You can also schedule a tour at ttcpalms.com/membership.';
   }
 
   if (lower.includes('lesson') || lower.includes('coach') || lower.includes('clinic')) {
-    return 'Lessons are available: private is $60/hour, semi-private is $40/person/hour, and group clinics are $25/person. What day are you looking at?';
+    return 'We offer private lessons by appointment (60 or 90 min) with USPTA/PPR certified pros, and Morning Clinics Mon/Wed/Fri 7AM–9AM (8 players max). Sunset Socials are coming soon on Thu & Sat evenings!';
   }
 
   if (lower.includes('waiver') || lower.includes('sign')) {
-    return 'Yes, every player needs a signed waiver before playing. It can be completed online or at the front desk in about two minutes.';
+    return 'All players must sign a waiver before playing. You can complete it online at ttcpalms.com/waiver. Guest waivers are also available — all players need one before stepping on the courts.';
   }
 
   if (lower.includes('hour') || lower.includes('open')) {
-    return 'We are open Monday-Friday 6am-10pm, Saturday 7am-9pm, and Sunday 8am-8pm.';
+    return 'TTC Palms is open 7 days a week. The Executive Office is open Mon–Fri 9 AM – 1 PM. Lit courts are available dusk to 10 PM. We\'re located at 45750 San Luis Rey in Palm Desert.';
   }
 
-  if (lower.includes('event') || lower.includes('tournament') || lower.includes('round robin')) {
-    return 'This week includes Monday Night Round Robin at 6pm, Wednesday Drill & Play at 7pm, and Saturday Morning Tournament at 9am.';
+  if (lower.includes('event') || lower.includes('tournament') || lower.includes('social')) {
+    return 'TTC Palms hosts Morning Clinics (Mon/Wed/Fri 7AM), Sunset Socials (Thu/Sat evenings — coming soon), and regular tournaments. Check ttcpalms.com/events for the latest schedule.';
   }
 
-  return 'I can help with court bookings, memberships, lessons, events, waivers, and general club questions. What would you like to do?';
+  return 'Welcome to TTC Palms — the desert\'s premier tennis & pickleball club. I can help with court reservations, memberships, lessons, events, waivers, and directions. What can I assist you with?';
 }

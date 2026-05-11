@@ -14,22 +14,22 @@ import {
 } from '@/db/schema';
 import { seedClubKnowledge } from './rag';
 
-export const DEMO_CLUB_SLUG = 'pickleball-pro-club';
+export const DEMO_CLUB_SLUG = 'ttcpalms';
 export const DEMO_CLUB_ALIAS = 'demo';
 
 export type ClubRecord = typeof clubs.$inferSelect;
 
 export const fallbackDemoClub: ClubRecord = {
   id: '00000000-0000-4000-8000-000000000001',
-  name: 'Pickleball Pro Club',
+  name: 'TTC Palms',
   slug: DEMO_CLUB_SLUG,
-  description: 'Premier pickleball facility with 8 courts, pro shop, lessons, leagues, and weekend events.',
-  address: '1200 Rally Point Drive, Austin, TX',
-  phone: '(555) 014-2024',
-  website: 'https://example.com',
-  timezone: 'America/Chicago',
+  description: "Desert's premier tennis & pickleball club. Championship courts, elite coaching, luxury amenities, and a community united by passion since 1948.",
+  address: '45750 San Luis Rey, Palm Desert, CA 92260',
+  phone: '(760) 346-6126',
+  website: 'https://ttcpalms.com',
+  timezone: 'America/Los_Angeles',
   settings: {
-    courtCount: 8,
+    courtCount: 12,
     bookingWindow: 14,
     maxGroupSize: 4,
     requireWaiver: true,

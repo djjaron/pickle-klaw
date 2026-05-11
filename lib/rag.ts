@@ -5,27 +5,39 @@ import { knowledgeChunks } from '@/db/schema';
 export const defaultKnowledge = [
   {
     category: 'hours',
-    content: 'We are open Monday through Friday 6am-10pm, Saturday 7am-9pm, Sunday 8am-8pm.',
+    content: 'TTC Palms is open 7 days a week. Executive Office hours are Mon–Fri 9 AM – 1 PM. Lit courts available from dusk until 10 PM.',
+  },
+  {
+    category: 'location',
+    content: 'TTC Palms is located at 45750 San Luis Rey, Palm Desert, CA 92260. Enter at Shadow Mountain Resort gate off San Luis Rey — dial 111 at the gate if not a member. Turn left on Club Circle Dr and follow to the parking in front of the courts.',
   },
   {
     category: 'pricing',
-    content: 'Drop-in play is $15. Standard membership is $49/month for 4 court sessions. Premium membership is $89/month for unlimited courts. Guests are $10 with a member.',
+    content: 'Memberships are available for Tennis, Pickleball, Social, Homeowner, and Founding levels. Private lessons are available by appointment in 60 or 90 minute sessions. Morning Clinics run Mon, Wed, Fri 7AM–9AM with 8 players max.',
   },
   {
     category: 'courts',
-    content: 'The club has 6 outdoor courts and 2 indoor courts. Indoor courts require a reservation. Outdoor courts are first-come, first-served outside league blocks.',
+    content: 'TTC Palms features championship pickleball and tennis courts with professional surfaces. Court reservations can be made online. Lit courts are available dusk to 10 PM.',
   },
   {
     category: 'rules',
-    content: 'All players need non-marking shoes and a signed waiver. Paddle rentals are $5. Courts are limited to 4 players unless staff approves a clinic.',
-  },
-  {
-    category: 'events',
-    content: 'Weekly events include Monday Night Round Robin at 6pm, Wednesday Drill & Play at 7pm, and Saturday Morning Tournament at 9am.',
+    content: 'All players must sign a waiver before playing. Guest waivers are available online. Non-marking shoes required on all courts. Proper tennis/pickleball attire required.',
   },
   {
     category: 'coaching',
-    content: 'Lessons are available: private lessons are $60/hour, semi-private lessons are $40/person/hour, and group clinics are $25/person.',
+    content: 'Elite coaching from USPTA and PPR certified professionals. Private lessons by appointment (60 or 90 min). Morning Clinics Mon/Wed/Fri 7AM–9AM. Sunset Socials on Thu & Sat evenings (coming soon).',
+  },
+  {
+    category: 'amenities',
+    content: 'TTC Palms offers a Bollettieri infinity pool, pro shop with equipment and apparel, members-only lounges, sunset terrace, and a future restaurant. Parking is available directly in front of the courts.',
+  },
+  {
+    category: 'events',
+    content: 'TTC Palms hosts regular events including Morning Clinics (Mon/Wed/Fri 7AM), Sunset Socials (Thu/Sat evenings, coming soon), tournaments, and private events. Check ttcpalms.com/events for the latest schedule.',
+  },
+  {
+    category: 'membership',
+    content: 'TTC Palms offers Tennis, Pickleball, Social, Homeowner, and Founding memberships. Contact frontdesk@ttcpalms.com or call (760) 346-6126 to inquire. Schedule a tour at ttcpalms.com/membership.',
   },
 ];
 

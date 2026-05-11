@@ -1,5 +1,6 @@
 import { defaultKnowledge } from '@/lib/rag';
 import { getDashboardStats, resolveClub } from '@/lib/db';
+import { KnowledgeManager } from '@/components/KnowledgeManager';
 
 export const dynamic = 'force-dynamic';
 
@@ -41,6 +42,21 @@ export default async function ClubPage({ params }: { params: { clubId: string } 
               <Field label="Phone" value={club.phone || 'Not set'} />
               <Field label="Address" value={club.address || 'Not set'} />
               <Field label="Timezone" value={club.timezone || 'Not set'} />
+              <Field label="Website" value={club.website || 'Not set'} href={club.website || undefined} />
+            </div>
+          </section>
+
+          <section className="soft-card rounded-lg p-4">
+            <h2 className="text-sm font-semibold">Links</h2>
+            <div className="mt-3 space-y-2">
+              <a
+                href="https://ttcpalms.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block rounded-md border border-[#dfe7da] bg-[#f8fbf5] px-3 py-2 text-sm font-medium text-[#1b6b3a] transition hover:border-[#8bcaa1] hover:bg-[#f7fcf5]"
+              >
+                TTCPalms.com →
+              </a>
             </div>
           </section>
 
@@ -91,6 +107,8 @@ export default async function ClubPage({ params }: { params: { clubId: string } 
               ))}
             </div>
           </section>
+
+          <KnowledgeManager clubId={params.clubId} />
         </div>
       </div>
     </main>
