@@ -39,6 +39,42 @@ export const defaultKnowledge = [
     category: 'membership',
     content: 'TTC Palms offers Tennis, Pickleball, Social, Homeowner, and Founding memberships. Contact frontdesk@ttcpalms.com or call (760) 346-6126 to inquire. Schedule a tour at ttcpalms.com/membership.',
   },
+  {
+    category: 'tournaments',
+    content: 'TTC Palms hosts regular tournaments for all skill levels from 2.0 to 5.0. Check ttcpalms.com/events for upcoming tournament dates and registration.',
+  },
+  {
+    category: 'dress code',
+    content: 'TTC Palms requires proper tennis/pickleball attire. No swimwear, no jeans, no open-toed shoes. Non-marking court shoes are required on all playing surfaces.',
+  },
+  {
+    category: 'doubles play',
+    content: 'Group play and doubles is welcome. Courts accommodate up to 4 players. For groups larger than 4, reserve multiple adjacent courts. Regular court reservation policies apply.',
+  },
+  {
+    category: 'kids programs',
+    content: 'TTC Palms offers junior clinics and programs for kids ages 6-17. Kids waivers are required and must be signed by a parent or guardian. Contact frontdesk@ttcpalms.com for current youth program schedules.',
+  },
+  {
+    category: 'private events',
+    content: 'Private events and parties can be hosted at TTC Palms. The sunset terrace is available for private gatherings. Contact the Executive Office at (760) 346-6126 to discuss event packages and availability.',
+  },
+  {
+    category: 'billing',
+    content: 'For billing questions or concerns, contact the Executive Office at (760) 346-6126 or email frontdesk@ttcpalms.com. Membership charges are processed on the 1st of each month.',
+  },
+  {
+    category: 'access cards',
+    content: 'Lost or damaged membership cards can be replaced at the Pro Shop. A $10 replacement fee applies. You can still access the courts by checking in at the front desk.',
+  },
+  {
+    category: 'referral program',
+    content: 'TTC Palms members can refer friends and receive a credit toward their next month\'s dues. Referred friends receive a complimentary trial session. Ask at the Pro Shop for details.',
+  },
+  {
+    category: 'equipment',
+    content: 'Paddles, balls, and accessories are available for purchase at the Pro Shop. Demo paddles are available to try before you buy. Paddle rental is included with drop-in and guest passes.',
+  },
 ];
 
 export async function retrieveKnowledge(clubId: string | null, query: string): Promise<string[]> {

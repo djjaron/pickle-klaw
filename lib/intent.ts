@@ -5,19 +5,22 @@
 
 export const INTENT_PATTERNS: Record<string, { keywords: string[]; requires: string[] }> = {
   booking: {
-    keywords: ['book', 'book a', 'booking', 'reserve', 'reservation', 'court', 'courts', 'schedule', 'slot', 'available', 'hold', 'grab', 'join', 'session', 'play', 'event', 'lesson', 'clinic'],
-    requires: ['date'],
+    keywords: ['book', 'book a', 'booking', 'reserve', 'reservation', 'court', 'courts',
+      'schedule', 'slot', 'available', 'hold', 'grab', 'join', 'session', 'play', 'event',
+      'lesson', 'clinic', 'doubles', 'party', 'people', 'coach a', 'same time', 'recurring',
+      'every week', 'birthday', 'host'],
+    requires: [],
   },
   question: {
-    keywords: ['what', 'how', 'when', 'who', 'where', 'hours', 'open', 'lesson', 'lessons', 'event', 'events', 'can you', 'can i', 'tell me', 'do you', 'week', 'today', 'private', 'visit', 'shop', 'pro shop'],
+    keywords: ['what', 'how', 'when', 'who', 'where', 'hours', 'open', 'lesson', 'lessons', 'event', 'events', 'can you', 'can i', 'tell me', 'do you', 'week', 'today', 'private', 'visit', 'shop', 'pro shop', 'tournament', 'dress code', 'kids', 'program', 'programs'],
     requires: [],
   },
   waiver: {
     keywords: ['waiver', 'waivers', 'sign', 'signed', 'signing', 'release', 'liability', 'form', 'forms'],
-    requires: ['name'],
+    requires: [],
   },
   directory: {
-    keywords: ['find', 'lookup', 'look up', 'search', 'coach', 'coaches', 'instructor', 'find me', 'who is', 'pro'],
+    keywords: ['find', 'lookup', 'look up', 'search', 'coach', 'coaches', 'instructor', 'find me', 'who is', 'pro', 'players'],
     requires: ['name'],
   },
   pricing: {
@@ -25,7 +28,7 @@ export const INTENT_PATTERNS: Record<string, { keywords: string[]; requires: str
     requires: [],
   },
   complaint: {
-    keywords: ['problem', 'problem with', 'issue', 'broken', 'refund', 'cancel', 'unhappy', 'bad', 'wrong', 'not working', 'doesn\'t work', 'complaint', 'help'],
+    keywords: ['problem', 'problem with', 'issue', 'broken', 'refund', 'cancel', 'unhappy', 'bad', 'wrong', 'not working', 'doesn\'t work', 'complaint', 'help', 'charged', 'frustrating', 'twice', 'really'],
     requires: [],
   },
   membership: {
@@ -33,7 +36,7 @@ export const INTENT_PATTERNS: Record<string, { keywords: string[]; requires: str
     requires: ['name'],
   },
   check_in: {
-    keywords: ['check in', 'check-in', 'arrived', 'here for', 'i have a reservation', 'i am here', 'checking in'],
+    keywords: ['check in', 'check-in', 'arrived', 'here for', 'i have a reservation', 'i am here', 'checking in', 'community', 'live in'],
     requires: ['name'],
   },
 };
@@ -70,6 +73,26 @@ export function classifyIntent(message: string): ClassifiedIntent {
     if (nameMatch) {
       entities.name = nameMatch[1].trim();
       break;
+    }
+  }
+
+  // Reject extracted names that are common non-name words
+  if (entities.name) {
+    const INVALID_NAME_WORDS = new Set([
+      'a', 'an', 'the',
+      'my', 'your', 'our', 'their', 'his', 'her', 'its',
+      'this', 'that', 'these', 'those',
+      'i', 'we', 'you', 'they', 'he', 'she', 'it',
+      'do', 'does', 'did', 'is', 'are', 'was', 'were',
+      'who', 'what', 'when', 'where', 'why', 'how',
+      'coach', 'coaches', 'member', 'members', 'membership',
+      'court', 'courts', 'waiver', 'waivers', 'booking',
+      'sign', 'for', 'with', 'from', 'about',
+      'can', 'will', 'would', 'could', 'should', 'may', 'might',
+    ]);
+    const nameWords = entities.name.toLowerCase().split(/\s+/);
+    if (nameWords.every(w => INVALID_NAME_WORDS.has(w))) {
+      delete entities.name;
     }
   }
 
