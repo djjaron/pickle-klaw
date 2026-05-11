@@ -28,7 +28,8 @@ export function AgentTrace({ traces }: AgentTraceProps) {
         const timestamp = trace.timestamp ? new Date(trace.timestamp) : null;
 
         return (
-        <div key={i} className="space-y-3 rounded-lg border border-[#dfe7da] bg-white p-4 shadow-sm">
+        <div key={i} className="animate-slide-in rounded-lg bg-gradient-to-br from-[#d9ead3] to-[#cfe5fa] p-px">
+        <div className="space-y-3 rounded-lg bg-white p-4 shadow-sm">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-semibold uppercase tracking-wide text-[#7a877c]">Intent</span>
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
@@ -49,7 +50,7 @@ export function AgentTrace({ traces }: AgentTraceProps) {
             </div>
             <div className="h-1.5 overflow-hidden rounded-full bg-[#e6ede2]">
               <div
-                className={`h-full rounded-full transition-all ${
+                className={`confidence-bar h-full rounded-full ${
                   confidence > 70 ? 'bg-[#2f9b5f]' :
                   confidence > 40 ? 'bg-[#d9961f]' : 'bg-[#ce4d4d]'
                 }`}
@@ -97,6 +98,7 @@ export function AgentTrace({ traces }: AgentTraceProps) {
           <div className="text-right text-[9px] text-[#98a39a]">
             {timestamp ? timestamp.toLocaleTimeString() : 'No timestamp'}
           </div>
+        </div>
         </div>
       )})}
     </div>

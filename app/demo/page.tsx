@@ -77,9 +77,9 @@ export default function DemoPage() {
 
       <section className="mx-auto w-full max-w-6xl px-4 py-4 sm:px-6">
         <div className="grid gap-3 sm:grid-cols-3">
-          <StatusCard label="Mode" value="Text MVP" detail="Voice later" />
-          <StatusCard label="Database" value="Neon" detail="Logging enabled" />
-          <StatusCard label="Model" value={traces[0]?.model || 'Template'} detail="Adapter ready" />
+          <StatusCard label="Mode" value="Text MVP" detail="Voice later" icon="🎾" />
+          <StatusCard label="Database" value="Neon" detail="Logging enabled" icon="🗄️" />
+          <StatusCard label="Model" value={traces[0]?.model || 'Template'} detail="Adapter ready" icon="🤖" />
         </div>
         {error && (
           <div className="mt-3 rounded-lg border border-[#efb4b4] bg-[#fff0f0] px-3 py-2 text-sm text-[#8a2525]">
@@ -89,7 +89,14 @@ export default function DemoPage() {
       </section>
 
       <section className="mx-auto w-full max-w-6xl px-4 pb-2 sm:px-6">
-        <TestRunner onSend={sendMessage} loading={loading} />
+        <div
+          className="animate-gradient rounded-xl border border-[#dce6d7] p-4 sm:p-5"
+          style={{
+            background: 'linear-gradient(135deg, #fbfcf8 0%, #eaf2e5 25%, #f3f8ef 50%, #eef5e9 75%, #fbfcf8 100%)',
+          }}
+        >
+          <TestRunner onSend={sendMessage} loading={loading} />
+        </div>
       </section>
 
       <div className="mx-auto grid min-h-0 w-full max-w-6xl flex-1 grid-rows-[minmax(0,1fr)_auto] gap-4 px-4 pb-4 sm:px-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:grid-rows-1">
@@ -107,12 +114,17 @@ export default function DemoPage() {
   );
 }
 
-function StatusCard({ label, value, detail }: { label: string; value: string; detail: string }) {
+function StatusCard({ label, value, detail, icon }: { label: string; value: string; detail: string; icon: string }) {
   return (
     <div className="soft-card rounded-lg p-3">
-      <div className="text-[11px] font-semibold uppercase tracking-wide text-[#6a7a6e]">{label}</div>
-      <div className="mt-1 truncate text-sm font-semibold text-[#15211b]">{value}</div>
-      <div className="mt-0.5 text-xs text-[#667468]">{detail}</div>
+      <div className="flex items-center gap-2.5">
+        <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-white/70 text-base shadow-sm">{icon}</span>
+        <div className="min-w-0">
+          <div className="text-[11px] font-semibold uppercase tracking-wide text-[#6a7a6e]">{label}</div>
+          <div className="mt-1 truncate text-sm font-semibold text-[#15211b]">{value}</div>
+          <div className="mt-0.5 text-xs text-[#667468]">{detail}</div>
+        </div>
+      </div>
     </div>
   );
 }

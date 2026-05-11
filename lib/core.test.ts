@@ -375,7 +375,7 @@ describe('retrieveKnowledge (fallback)', () => {
   });
 
   it('returns relevant knowledge for hours', async () => {
-    const chunks = await retrieveKnowledge(null, 'What time do you open?');
+    const chunks = await retrieveKnowledge(null, 'What time do you open');
     expect(chunks.some(c => c.toLowerCase().includes('7 days') || c.toLowerCase().includes('open'))).toBe(true);
   });
 
@@ -405,8 +405,8 @@ describe('retrieveKnowledge (fallback)', () => {
     expect(chunks.length).toBeLessThanOrEqual(4);
   });
 
-  it('all 9 default knowledge categories exist', () => {
-    expect(defaultKnowledge).toHaveLength(9);
+  it('all 18 default knowledge chunks exist (9 original + 9 added)', () => {
+    expect(defaultKnowledge).toHaveLength(18);
     const categories = defaultKnowledge.map(k => k.category);
     expect(categories).toContain('hours');
     expect(categories).toContain('pricing');

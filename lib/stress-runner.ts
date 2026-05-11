@@ -10,7 +10,6 @@
 
 import { classifyIntent } from './intent';
 import { retrieveKnowledge, defaultKnowledge } from './rag';
-import { generateTemplateResponse } from './models';
 
 // ─── 25 Synthetic User Personas ─────────────────────────────────────────────
 

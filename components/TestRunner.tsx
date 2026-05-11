@@ -98,7 +98,7 @@ export function TestRunner({ onSend, loading }: TestRunnerProps) {
                 key={prompt}
                 onClick={() => runTest(prompt)}
                 disabled={loading}
-                className="flex items-center gap-2 rounded-lg border border-[#d7e2d3] bg-white px-3 py-2 text-left transition hover:border-[#8bcaa1] hover:bg-[#f7fcf5] disabled:opacity-40"
+                className="flex items-center gap-2 rounded-lg border border-[#d7e2d3] bg-white px-3 py-2 text-left transition-smooth hover:scale-[1.02] hover:shadow-lg hover:border-[#8bcaa1] hover:bg-[#f7fcf5] disabled:opacity-40"
               >
                 <span className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold ${intentColors[intent.intent] || intentColors.general_question}`}>
                   {intent.intent}

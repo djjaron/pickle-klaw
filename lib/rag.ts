@@ -5,7 +5,7 @@ import { knowledgeChunks } from '@/db/schema';
 export const defaultKnowledge = [
   {
     category: 'hours',
-    content: 'TTC Palms is open 7 days a week. Executive Office hours are Mon–Fri 9 AM – 1 PM. Lit courts available from dusk until 10 PM.',
+    content: 'TTC Palms is open 7 days a week. Executive Office hours are Mon–Fri 9 AM – 1 PM. Lit courts available from dusk until 10 PM closing time.',
   },
   {
     category: 'location',

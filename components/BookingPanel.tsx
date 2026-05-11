@@ -38,17 +38,25 @@ export function BookingPanel({ trace }: BookingPanelProps) {
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-            {slots.map((slot) => (
-              <button
-                key={slot}
-                className="min-h-12 rounded-lg border border-[#d2dfcc] bg-white px-3 py-2 text-left text-sm text-[#15211b] shadow-sm transition hover:border-[#8bcaa1] hover:bg-[#f7fcf5]"
-              >
-                <span className="block font-semibold">{slot}</span>
-                <span className="block text-[11px] text-[#667468]">{isBooking ? result?.date : 'Demo slot'}</span>
-              </button>
-            ))}
-          </div>
+          {!trace ? (
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="min-h-12 rounded-lg border border-[#d2dfcc] animate-shimmer" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {slots.map((slot) => (
+                <button
+                  key={slot}
+                  className="min-h-12 rounded-lg border border-[#d2dfcc] bg-white px-3 py-2 text-left text-sm text-[#15211b] shadow-sm transition-smooth hover:scale-[1.02] hover:shadow-md hover:border-[#a8d4b8] hover:bg-[#f7fcf5]"
+                >
+                  <span className="block font-semibold">{slot}</span>
+                  <span className="block text-[11px] text-[#667468]">{isBooking ? result?.date : 'Demo slot'}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-3 gap-2">

@@ -33,15 +33,15 @@ export function ChatSimulator({ messages, loading, onSend }: ChatSimulatorProps)
           <h2 className="text-sm font-semibold text-[#15211b]">Customer Thread</h2>
           <p className="text-xs text-[#667468]">Simulator conversation</p>
         </div>
-        <span className="rounded-md bg-[#dff8e8] px-2.5 py-1 text-[11px] font-semibold text-[#1b6b3a]">Live demo</span>
+        <span className="rounded-md bg-[#dff8e8] px-2.5 py-1 text-[11px] font-semibold text-[#1b6b3a] animate-pulse-glow">Live demo</span>
       </div>
 
       <div className="flex-1 space-y-3 overflow-y-auto p-4 sm:p-5">
         {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={`flex ${msg.role === 'customer' ? 'justify-end' : 'justify-start'}`}
-          >
+            <div
+              key={i}
+              className={`flex animate-fade-in ${msg.role === 'customer' ? 'justify-end' : 'justify-start'}`}
+            >
             <div
               className={`max-w-[86%] rounded-lg px-4 py-3 text-sm leading-relaxed shadow-sm ${
                 msg.role === 'customer'
@@ -55,8 +55,13 @@ export function ChatSimulator({ messages, loading, onSend }: ChatSimulatorProps)
         ))}
         {loading && (
           <div className="flex justify-start">
-            <div className="rounded-lg border border-[#dfe7da] bg-white px-4 py-3 text-sm text-[#667468]">
-              <span className="animate-pulse">Drafting response...</span>
+            <div className="animate-fade-in rounded-lg border border-[#dfe7da] bg-white px-4 py-3 text-sm text-[#667468]">
+              Drafting response
+              <span className="inline-flex ml-0.5">
+                <span className="dot-1" />
+                <span className="dot-2" />
+                <span className="dot-3" />
+              </span>
             </div>
           </div>
         )}
@@ -67,7 +72,7 @@ export function ChatSimulator({ messages, loading, onSend }: ChatSimulatorProps)
           <button
             key={i}
             onClick={() => onSend(p)}
-            className="shrink-0 rounded-md border border-[#d7e2d3] bg-white px-3 py-1.5 text-xs text-[#536356] transition hover:border-[#8bcaa1] hover:bg-[#f2faf4] disabled:opacity-40"
+            className="shrink-0 rounded-md border border-white/40 glass-btn px-3 py-1.5 text-xs text-[#536356] transition-smooth hover:border-[#8bcaa1] hover:bg-white/80 disabled:opacity-40"
             disabled={loading}
           >
             {p}
