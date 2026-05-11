@@ -1,5 +1,6 @@
 import { getDb } from '@/db/db';
-import { agentRuns } from '@/db/schema';
+import { agentRuns, messages } from '@/db/schema';
+import { eq, desc } from 'drizzle-orm';
 import { callModel, getModelConfig } from './models';
 import { retrieveKnowledge } from './rag';
 import { classifyIntent, toolBooking, toolMemberLookup, toolWaiverCheck } from './tools';
@@ -44,11 +45,14 @@ export async function runAgent(
     return buildResult(response, intent, toolsCalled, knowledgeUsed, toolResult, start);
   }
 
-  // 3. Run knowledge retrieval
+  // 3. Load recent conversation history for context
+  const history = await loadHistory(conversationId, 6);
+
+  // 4. Run knowledge retrieval
   const knowledge = await retrieveKnowledge(clubId, customerMessage);
   knowledgeUsed.push(...knowledge);
 
-  // 4. Execute tools based on intent
+  // 5. Execute tools based on intent
   switch (intent.intent) {
     case 'booking':
       toolResult = await toolBooking(clubId, intent.entities);
@@ -64,11 +68,11 @@ export async function runAgent(
       break;
   }
 
-  // 5. Build system prompt with knowledge + tool results
-  const systemPrompt = buildSystemPrompt(clubId, knowledge, toolResult, intent);
+  // 6. Build system prompt with history + knowledge + tool results
+  const systemPrompt = buildSystemPrompt(clubId, knowledge, toolResult, intent, history);
   const response = await callModel(systemPrompt, customerMessage);
 
-  // 6. Log agent run
+  // 7. Log agent run
   const now = new Date();
   if (conversationId) {
     const run = {
@@ -91,18 +95,38 @@ export async function runAgent(
   return buildResult(response, intent, toolsCalled, knowledgeUsed, toolResult, start);
 }
 
+async function loadHistory(conversationId?: string, limit = 6): Promise<Array<{ role: string; content: string }>> {
+  if (!conversationId) return [];
+  try {
+    const db = getDb();
+    const rows = await db.query.messages.findMany({
+      where: eq(messages.conversationId, conversationId),
+      orderBy: [desc(messages.createdAt)],
+      limit,
+    });
+    return rows.reverse().map(m => ({ role: m.role, content: m.content }));
+  } catch {
+    return [];
+  }
+}
+
 function buildSystemPrompt(
   clubId: string,
   knowledge: string[],
   toolResult: any,
-  intent: ClassifiedIntent
+  intent: ClassifiedIntent,
+  history: Array<{ role: string; content: string }> = [],
 ): string {
-  let prompt = `You are a friendly, professional AI receptionist for a pickleball club. Help customers with bookings, questions, and information.
+  let prompt = `You are a friendly, professional AI receptionist for TTC Palms, a premier tennis & pickleball club in Palm Desert, CA. Help customers with bookings, questions, and information.
 
 Club Knowledge:
 ${knowledge.map(k => `- ${k}`).join('\n')}
 
 `;
+
+  if (history.length > 0) {
+    prompt += `Recent conversation:\n${history.map(m => `${m.role === 'customer' ? 'Customer' : 'You'}: ${m.content}`).join('\n')}\n\n`;
+  }
 
   if (toolResult) {
     prompt += `Tool Results: ${JSON.stringify(toolResult)}\n\n`;
@@ -111,6 +135,7 @@ ${knowledge.map(k => `- ${k}`).join('\n')}
   prompt += `Customer Intent: ${intent.intent} (confidence: ${intent.confidence}%)
 Rules:
 - Be concise and helpful
+- If the customer references something from earlier in the conversation, use that context
 - If you can book something, confirm date/time and available slots
 - If pricing question, give exact numbers
 - If you need more info, ask exactly one follow-up question
